@@ -24,6 +24,7 @@ const Home = () => {
                     <div className="col-md-3">
                         <div className="sidebar">
                             <p>Popular Tags</p>
+
                             <TagList/>
                         </div>
                     </div>

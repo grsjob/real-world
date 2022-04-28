@@ -1,9 +1,10 @@
 import React from 'react';
 import {Link} from "react-router-dom";
+import {StyledArticlePreviewList} from "./styles";
 
 const ArticlePreview = () => {
     return (
-        <ul>
+        <StyledArticlePreviewList>
             <li className="article-preview">
                 <div className="article-meta">
                     <Link to="profile.html"><img src="http://i.imgur.com/Qr71crq.jpg"/></Link>
@@ -43,7 +44,7 @@ const ArticlePreview = () => {
                 </ul>
             </li>
 
-        </ul>
+        </StyledArticlePreviewList>
     );
 };
 
