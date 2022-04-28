@@ -20,6 +20,8 @@ const ArticlePreview = () => {
                     <p>This is the description for the post.</p>
                     <span>Read more...</span>
                 </Link>
+                <ul className="tag-list">
+                </ul>
             </li>
             <li className="article-preview">
                 <div className="article-meta">
@@ -37,6 +39,8 @@ const ArticlePreview = () => {
                     <p>This is the description for the post.</p>
                     <span>Read more...</span>
                 </Link>
+                <ul className="tag-list">
+                </ul>
             </li>
 
         </ul>

@@ -2,6 +2,7 @@ import React from 'react';
 import {Link} from "react-router-dom";
 import ArticlePreview from "/src/components/blocks/article-preview/article-preview";
 import TagList from "/src/components/blocks/tag-list/tag-list"
+import NavPills from "../../blocks/nav-pills/nav-pills";
 
 const Home = () => {
     return (
@@ -16,14 +17,7 @@ const Home = () => {
                 <div className="row">
                     <div className="col-md-9">
                         <div className="feed-toggle">
-                            <ul className="nav nav-pills outline-active">
-                                <li className="nav-item">
-                                    <Link className="nav-link disabled" to="">Your Feed</Link>
-                                </li>
-                                <li className="nav-item">
-                                    <Link className="nav-link active" to="">Global Feed</Link>
-                                </li>
-                            </ul>
+                            <NavPills/>
                         </div>
                         <ArticlePreview/>
                     </div>
