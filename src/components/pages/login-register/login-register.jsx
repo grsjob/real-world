@@ -1,6 +1,31 @@
 import React from 'react';
+import axios from 'axios';
+
+
+const instance = axios.create({
+    baseURL: 'https://api.realworld.io/api',
+    headers: {
+        'accept': 'application/json',
+        'Content-Type': 'application/json'
+    }
+});
+let token =''
+
+instance.post('/users',{
+    user: {
+        username: "grm28rus",
+        email: "grm28rus@yandex.ru",
+        password: "159753"
+    }
+}).then(({data})=> token = data.user.token ).then(()=>console.log(token));
+
+
+
+
 
 const LoginRegister = () => {
+
+
     return (
         <div className="auth-page">
             <div className="container page">
