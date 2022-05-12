@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import {Link, useNavigate} from "react-router-dom";
 import {$api} from "../../../api";
+import {useDispatch} from "react-redux";
+import {toggleStatusAutorisation} from "../../../redux/appSlice/appSlice";
 
 
 const Register = ({isRegisterPage}) => {
@@ -9,30 +11,48 @@ const Register = ({isRegisterPage}) => {
     const [password, setPassword] = useState('');
     const [emailError, setEmailError] = useState(false);
     const navigate = useNavigate();
+    const dispatch = useDispatch()
 
     const signUp = (e) => {
         e.preventDefault();
 
-        $api.post('/users', {
-            user: {
-                username: userName,
-                email: email,
-                password: password
-            }
-        })
-            .then(({data}) => window.localStorage.setItem('Token', data.user.token))
-            .then(()=>{
-                navigate("/login")
-            })
-            .catch(error => {
-                if(error.response.status === 422 ){
-                    setEmailError(true)
-                    console.log(error.response.data)
-                    setUserName('')
-                    setEmail('')
-                    setPassword('')
+        if(!isRegisterPage){
+            $api.post('/users/login', {
+                user: {
+                    email: email,
+                    password: password
                 }
-            });
+            })
+                .then(({data}) => window.localStorage.setItem('Token', data.user.token))
+                .then(()=>{
+                    dispatch(toggleStatusAutorisation())
+                    navigate("/")
+                })
+                .catch(error => console.log(error))
+        } else {
+            $api.post('/users', {
+                user: {
+                    username: userName,
+                    email: email,
+                    password: password
+                }
+            })
+                .then(({data}) => window.localStorage.setItem('Token', data.user.token))
+                .then(()=>{
+                    navigate("/login")
+                })
+                .catch(error => {
+                    if(error.response.status === 422 ){
+                        setEmailError(true)
+                        console.log(error.response.data)
+                        setUserName('')
+                        setEmail('')
+                        setPassword('')
+                    }
+                });
+        }
+
+
     }
 
     return (
