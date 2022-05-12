@@ -1,40 +1,38 @@
 import React, {useState} from 'react';
-// import axios from 'axios';
-import {Link} from "react-router-dom";
-import {useDispatch} from "react-redux";
-import {addUser} from "../../../redux/usersSlice/usersSlice";
-//
-// const instance = axios.create({
-//     baseURL: 'https://api.realworld.io/api',
-//     headers: {
-//         'accept': 'application/json',
-//         'Content-Type': 'application/json'
-//     }
-// });
-// let token = ''
-//
-// instance.post('/users', {
-//     user: {
-//         username: "grm28rus",
-//         email: "grm28rus@yandex.ru",
-//         password: "159753"
-//     }
-// }).then(({data}) => token = data.user.token).then(() => console.log(token));
+import {Link, useNavigate} from "react-router-dom";
+import {$api} from "../../../api";
 
 
 const Register = ({isRegisterPage}) => {
     const [userName, setUserName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const dispatch = useDispatch()
+    const [emailError, setEmailError] = useState(false);
+    const navigate = useNavigate();
+
     const signUp = (e) => {
-        //
-        // console.log(`name ${userName}`)
-        // console.log(`email ${email}`)
-        // console.log(`password ${password}`)
         e.preventDefault();
-        dispatch(addUser({userName, email, password}))
-        dispatch(addUser({userName, email, password}))
+
+        $api.post('/users', {
+            user: {
+                username: userName,
+                email: email,
+                password: password
+            }
+        })
+            .then(({data}) => window.localStorage.setItem('Token', data.user.token))
+            .then(()=>{
+                navigate("/login")
+            })
+            .catch(error => {
+                if(error.response.status === 422 ){
+                    setEmailError(true)
+                    console.log(error.response.data)
+                    setUserName('')
+                    setEmail('')
+                    setPassword('')
+                }
+            });
     }
 
     return (
@@ -50,7 +48,7 @@ const Register = ({isRegisterPage}) => {
                         </p>
 
                         <ul className="error-messages">
-                            <li>That email is already taken</li>
+                            {emailError ? <li>That email or username are already taken</li> : null}
                         </ul>
 
                         <form onSubmit={signUp}>
