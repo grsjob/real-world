@@ -23,7 +23,9 @@ const Register = ({isRegisterPage}) => {
                     password: password
                 }
             })
-                .then(({data}) => window.localStorage.setItem('Token', data.user.token))
+                .then(({data}) => {
+                    window.localStorage.setItem('Token', data.user.token)
+                })
                 .then(()=>{
                     dispatch(toggleStatusAutorisation())
                     navigate("/")

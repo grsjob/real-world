@@ -1,6 +1,10 @@
 import {createSlice} from '@reduxjs/toolkit'
 
-const initialState = {
+interface AppState {
+    isAutorised: boolean
+}
+
+const initialState: AppState = {
     isAutorised: false,
 }
 

@@ -3,16 +3,23 @@ import {Link} from "react-router-dom";
 import ArticlePreview from "/src/components/blocks/article-preview/article-preview";
 import TagList from "/src/components/blocks/tag-list/tag-list"
 import NavPills from "../../blocks/nav-pills/nav-pills";
+import {useSelector} from "react-redux";
 
 const Home = () => {
+    const isAutorised = useSelector(state => state.app.isAutorised)
+
+
     return (
         <div className="home-page">
-            <div className="banner">
-                <div className="container">
-                    <h1 className="logo-font">conduit</h1>
-                    <p>A place to share your knowledge.</p>
+            {
+                isAutorised ? null :
+                <div className="banner">
+                    <div className="container">
+                        <h1 className="logo-font">conduit</h1>
+                        <p>A place to share your knowledge.</p>
+                    </div>
                 </div>
-            </div>
+            }
             <div className="container page">
                 <div className="row">
                     <div className="col-md-9">
@@ -31,7 +38,7 @@ const Home = () => {
                 </div>
             </div>
         </div>
-            );
-            };
+    );
+};
 
-            export default Home;
+export default Home;
