@@ -1,33 +1,24 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Link, NavLink} from "react-router-dom";
-import {$api} from "../../../api";
-import { useAppSelector, useAppDispatch } from '../../../redux/hooks/hooks'
-
-const getUserData = async () => {
-    const token = await window.localStorage.getItem('Token')
-
-    $api.interceptors.request.use( (config) => {
-              config.headers!.Authorization = `Token ${token}`
-        return config;
-    }, function (error) {
-        // Do something with request error
-        return Promise.reject(error);
-    });
-
-    await $api.get('/user')
-        .then(({data}) => {
-
-        })
-        .catch(error => console.log(error))
-}
+import {useAppSelector, useAppDispatch} from '../../../redux/hooks/hooks'
+import AuthService from "../../../services/AuthService";
 
 
 const Nav = () => {
     const isAutorised = useAppSelector(state => state.app.isAutorised)
+    const dispatch = useAppDispatch()
+    let email: string
+    let username: string
+    let image: string
 
-    if (isAutorised) {
-        getUserData()
-    }
+    useEffect(() => {
+        const data = AuthService.getCurrentUser()
+        email = data.email
+    }, [isAutorised]);
+
+    console.log(email)
+    console.log(username)
+    console.log(image)
 
     return (
         <nav className='navbar navbar-light'>
