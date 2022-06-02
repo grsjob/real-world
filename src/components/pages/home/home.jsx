@@ -6,13 +6,11 @@ import NavPills from "../../blocks/nav-pills/nav-pills";
 import {useSelector} from "react-redux";
 
 const Home = () => {
-    const isAutorised = useSelector(state => state.app.isAutorised)
 
 
     return (
         <div className="home-page">
             {
-                isAutorised ? null :
                 <div className="banner">
                     <div className="container">
                         <h1 className="logo-font">conduit</h1>

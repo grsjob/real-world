@@ -1,25 +1,10 @@
 import React, {useEffect} from 'react';
 import {Link, NavLink} from "react-router-dom";
-import {useAppSelector, useAppDispatch} from '../../../redux/hooks/hooks'
-import AuthService from "../../../services/AuthService";
+import {useAppSelector, useAppDispatch} from '../../../hooks/hooks'
 
 
 const Nav = () => {
-    const isAutorised = useAppSelector(state => state.app.isAutorised)
-    const dispatch = useAppDispatch()
-    let email: string
-    let username: string
-    let image: string
-
-    useEffect(() => {
-        const data = AuthService.getCurrentUser()
-        email = data.email
-    }, [isAutorised]);
-
-    console.log(email)
-    console.log(username)
-    console.log(image)
-
+const isAutorised = false
     return (
         <nav className='navbar navbar-light'>
             <div className='container'>
