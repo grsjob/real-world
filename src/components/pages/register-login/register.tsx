@@ -1,102 +1,57 @@
 import React, {useState, FC, useRef} from 'react';
 import {Link, useNavigate} from "react-router-dom";
-import {useDispatch} from "react-redux";
-import {authApi, registerReq} from "../../../services/AuthService";
+import {authApi, logInExistingUser, userReq} from "../../../services/AuthService";
 import {useAppDispatch} from "../../../hooks/hooks";
+import {addUser} from "../../../redux/reducers/userSlice";
+import {IUserLogInResp} from "../../../models/IUserLogInResp";
 
 interface RegisterProps {
     isRegisterPage: boolean
 }
 
-const Register: FC<RegisterProps> = ({isRegisterPage}) => {
 
-    const [registerNewUser, {error,status}] = authApi.useRegisterNewUserMutation()
+const Register: FC<RegisterProps> = ({isRegisterPage}) => {
+    const [logInExistingUser,{data, isUninitialized}] = authApi.useLogInExistingUserMutation()
+    const [registerNewUser, {error, status}] = authApi.useRegisterNewUserMutation()
     const userNameRef = useRef<HTMLInputElement>(null)
     const passwordRef = useRef<HTMLInputElement>(null)
     const emailRef = useRef<HTMLInputElement>(null)
     const [emailError, setEmailError] = useState(false);
     const navigate = useNavigate();
     const dispatch = useAppDispatch()
+    if(!isRegisterPage){
+    }
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        if(userNameRef.current!.value
-            && emailRef.current!.value
-            && passwordRef.current!.value){
 
-            const formData: registerReq = {
+        if (isRegisterPage === undefined) {
+            const useData: userReq = {
+                user: {
+                    email: emailRef.current!.value,
+                    password: passwordRef.current!.value,
+                }
+            }
+
+            await logInExistingUser(useData)
+            navigate("/")
+            console.log(data)
+            // data && dispatch(addUser() )
+        } else {
+            const formData: userReq = {
                 user: {
                     username: userNameRef.current!.value,
                     email: emailRef.current!.value,
                     password: passwordRef.current!.value,
                 }
             }
-
-            if(!isRegisterPage){
-
-                navigate("/")
-
-            } else {
-                await registerNewUser(formData)
-                navigate("/login")
-            }
-
-        } else {
-            setEmailError(true)
-
+            await registerNewUser(formData)
+            console.log(status)
+            navigate("/login")
         }
 
 
-
-
-
     }
-
-
-
-    //     if(!isRegisterPage){
-    //         // $api.post('/users/login', {
-    //         //     user: {
-    //         //         email: email,
-    //         //         password: password
-    //         //     }
-    //         // })
-    //         //     .then(({data}) => {
-    //         //         window.localStorage.setItem('Token', data.user.token)
-    //         //     })
-    //         //     .then(()=>{
-    //         //         dispatch(toggleStatusAutorisation())
-    //         //         navigate("/")
-    //         //     })
-    //         //     .catch(error => console.log(error))
-    //     } else {
-    //         registerNewUser(formData)
-    //         console.log(data)
-    //     //     $api.post('/users', {
-    //     //         user: {
-    //     //             username: userName,
-    //     //             email: email,
-    //     //             password: password
-    //     //         }
-    //     //     })
-    //     //         .then(({data}) => window.localStorage.setItem('Token', data.user.token))
-    //     //         .then(()=>{
-    //     //             navigate("/login")
-    //     //         })
-    //     //         .catch(error => {
-    //     //             if(error.response.status === 422 ){
-    //     //                 setEmailError(true)
-    //     //                 console.log(error.response.data)
-    //     //                 setUserName('')
-    //     //                 setEmail('')
-    //     //                 setPassword('')
-    //     //             }
-    //     //         });
-    //     // }
-    //
-    //
-    // }
-
     return (
         <div className="auth-page">
             <div className="container page">
