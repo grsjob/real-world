@@ -1,53 +1,74 @@
 import React, {useState, FC, useRef} from 'react';
 import {Link, useNavigate} from "react-router-dom";
-import {authApi, logInExistingUser, userReq} from "../../../services/AuthService";
+import {authApi, userLogInReq, userRegNewUserReq} from "../../../services/AuthService";
 import {useAppDispatch} from "../../../hooks/hooks";
-import {addUser} from "../../../redux/reducers/userSlice";
-import {IUserLogInResp} from "../../../models/IUserLogInResp";
+import {addUser, logIn} from "../../../redux/reducers/userSlice";
+import {css, jsx} from '@emotion/react'
+import {RegisterDataErrors} from "../../../models/errors/registerErrors";
 
 interface RegisterProps {
     isRegisterPage: boolean
 }
 
-
 const Register: FC<RegisterProps> = ({isRegisterPage}) => {
-    const [logInExistingUser,{data, isUninitialized}] = authApi.useLogInExistingUserMutation()
-    const [registerNewUser, {error, status}] = authApi.useRegisterNewUserMutation()
+    const [logInExistingUser] = authApi.useLogInExistingUserMutation()
+    const [registerNewUser] = authApi.useRegisterNewUserMutation()
     const userNameRef = useRef<HTMLInputElement>(null)
     const passwordRef = useRef<HTMLInputElement>(null)
     const emailRef = useRef<HTMLInputElement>(null)
-    const [emailError, setEmailError] = useState(false);
+    const [loginError, setLoginError] = useState(false);
+    const [registerError, setRegisterError] = useState(false);
+    const [errorMassage, setErrorMassage] = useState('');
     const navigate = useNavigate();
     const dispatch = useAppDispatch()
-    if(!isRegisterPage){
-    }
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
 
-        if (isRegisterPage === undefined) {
-            const useData: userReq = {
+        if (!isRegisterPage) {
+            const useData: userLogInReq = {
                 user: {
                     email: emailRef.current!.value,
                     password: passwordRef.current!.value,
                 }
             }
+            const result = await logInExistingUser(useData)
+            if ("data" in result) {
+                const user = result.data.user
+                localStorage.setItem('token', user.token)
+                dispatch(addUser(user))
+                dispatch(logIn())
+                navigate("/")
 
-            await logInExistingUser(useData)
-            navigate("/")
-            console.log(data)
-            // data && dispatch(addUser() )
+            } else if ('error' in result) {
+                setLoginError(true)
+                emailRef.current!.value = ''
+                passwordRef.current!.value = ''
+            }
         } else {
-            const formData: userReq = {
+            const formData: userRegNewUserReq = {
                 user: {
                     username: userNameRef.current!.value,
                     email: emailRef.current!.value,
                     password: passwordRef.current!.value,
                 }
             }
-            await registerNewUser(formData)
-            console.log(status)
-            navigate("/login")
+            const result = await registerNewUser(formData)
+            if ("data" in result) {
+                navigate("/login")
+                console.log(result)
+
+            } else if ('error' in result && 'data' in result.error) {
+                setRegisterError(true)
+                emailRef.current!.value = ''
+                passwordRef.current!.value = ''
+                const data: RegisterDataErrors = result.error.data as RegisterDataErrors
+
+                let errorsKeys = Object.keys(data.errors)
+                let errorsValues = Object.values(data.errors)
+                setErrorMassage(errorsKeys.toString() + " " + errorsValues.toString())
+            }
+
         }
 
 
@@ -64,8 +85,12 @@ const Register: FC<RegisterProps> = ({isRegisterPage}) => {
                                 <Link to="/register">Need an account?</Link>}
                         </p>
 
-                        <ul className="error-messages">
-                            {emailError ? <li>That email or username are already taken</li> : null}
+                        <ul className="error-messages"
+                            style={{
+                                listStyle: `none`,
+                            }}>
+                            {loginError ? <li>Email or password are incorrect</li> : null}
+                            {registerError ? <li>{errorMassage}</li> : null}
                         </ul>
 
                         <form onSubmit={handleSubmit}>

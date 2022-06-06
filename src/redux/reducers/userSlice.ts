@@ -1,7 +1,5 @@
-import {IUser} from "../../models/IUser";
+import {IUserLogInResp} from "../../models/IUser";
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {IUserLogInResp} from "../../models/IUserLogInResp";
-import {logInExistingUser} from "../../services/AuthService";
 
 
 interface UserState {
