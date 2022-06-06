@@ -56,17 +56,16 @@ const Register: FC<RegisterProps> = ({isRegisterPage}) => {
             const result = await registerNewUser(formData)
             if ("data" in result) {
                 navigate("/login")
-                console.log(result)
-
             } else if ('error' in result && 'data' in result.error) {
                 setRegisterError(true)
                 emailRef.current!.value = ''
                 passwordRef.current!.value = ''
                 const data: RegisterDataErrors = result.error.data as RegisterDataErrors
-
-                let errorsKeys = Object.keys(data.errors)
-                let errorsValues = Object.values(data.errors)
-                setErrorMassage(errorsKeys.toString() + " " + errorsValues.toString())
+                let message = ''
+                for(let key in data.errors){
+                    message += key + ' ' + data.errors[key as keyof typeof data.errors] + ' '
+                }
+                setErrorMassage(message)
             }
 
         }
